@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+jspm_packages/
+web_modules/
+
+# Debug and Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Windows System Files (OS specific)
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.byhost
+.FindByContent
+.nvases
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Packaging and Build Outputs
+dist/
+out/
+build/
+release/
+*.exe
+*.dmg
+*.app
+*.deb
+*.rpm
+*.zip
+*.tar.gz
+
+# Environment variables and local settings
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
