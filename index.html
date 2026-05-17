@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WinClean Analyzer</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Load Outfit google font for premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- CUSTOM PREMIUM TITLEBAR (DRAGGABLE) -->
+  <header class="app-header">
+    <div class="header-logo">
+      <svg class="glow-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f0ff" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M2 17L12 22L22 17" stroke="#00f0ff" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M2 12L12 17L22 12" stroke="#00f0ff" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+      <span class="header-title">WinClean <span class="accent-text">Analyzer</span></span>
+      <span class="version-badge">v1.0.0</span>
+    </div>
+    
+    <!-- Theme Toggle Switch -->
+    <div class="theme-toggle-wrapper">
+      <button id="theme-toggle" class="theme-btn" title="Alternar Modo Claro/Oscuro">
+        <!-- Sun (Light) icon -->
+        <svg class="sun-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <!-- Moon (Dark) icon -->
+        <svg class="moon-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Window Actions (No-drag) -->
+    <div class="window-controls">
+      <button class="win-btn" id="win-btn-minimize" title="Minimizar">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+      <button class="win-btn" id="win-btn-maximize" title="Maximizar/Restaurar">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+        </svg>
+      </button>
+      <button class="win-btn close" id="win-btn-close" title="Cerrar">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <!-- SIDEBAR NAVIGATION -->
+    <nav class="sidebar">
+      <div class="nav-links">
+        <button class="nav-link active" data-tab="tab-dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+            <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+            <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+            <rect x="3" y="16" width="7" height="5" rx="1"></rect>
+          </svg>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-link" data-tab="tab-cleaner">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path>
+            <path d="M7 11L10 14L17 7"></path>
+          </svg>
+          <span>Limpiador</span>
+        </button>
+
+        <button class="nav-link" data-tab="tab-processes">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+            <rect x="9" y="9" width="6" height="6"></rect>
+            <line x1="9" y1="1" x2="9" y2="4"></line>
+            <line x1="15" y1="1" x2="15" y2="4"></line>
+            <line x1="9" y1="20" x2="9" y2="23"></line>
+            <line x1="15" y1="20" x2="15" y2="23"></line>
+            <line x1="20" y1="9" x2="23" y2="9"></line>
+            <line x1="20" y1="15" x2="23" y2="15"></line>
+            <line x1="1" y1="9" x2="4" y2="9"></line>
+            <line x1="1" y1="15" x2="4" y2="15"></line>
+          </svg>
+          <span>Administrador</span>
+        </button>
+
+        <button class="nav-link" data-tab="tab-startup">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>Inicio Windows</span>
+        </button>
+
+        <button class="nav-link" data-tab="tab-recommendations">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <span>Recomendaciones</span>
+        </button>
+      </div>
+
+      <!-- AUTHOR BADGE (PROUDLY FEATURING USER) -->
+      <div class="author-card">
+        <div class="avatar-glow">AO</div>
+        <div class="author-info">
+          <span class="author-label">Desarrollado por</span>
+          <span class="author-name">Alberto Ortiz</span>
+          <span class="author-status">
+            <span class="status-pulse"></span> Sistema Listo
+          </span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT VIEWPORT -->
+    <main class="main-content">
+      
+      <!-- 1. DASHBOARD VIEW -->
+      <section id="tab-dashboard" class="tab-view active">
+        <div class="view-header animate-fade-in">
+          <h1>Resumen del Sistema</h1>
+          <p class="subtitle">Análisis del rendimiento y almacenamiento local en tiempo real.</p>
+        </div>
+
+        <!-- Telemetry Gauges Grid -->
+        <div class="telemetry-grid">
+          <!-- CPU Card -->
+          <div class="card tele-card animate-slide-up" style="animation-delay: 0.1s">
+            <div class="card-header">
+              <h3>Uso del Procesador</h3>
+              <span class="metric-label">CPU</span>
+            </div>
+            <div class="gauge-container">
+              <!-- Inline Dynamic SVG Chart -->
+              <svg class="progress-ring" width="120" height="120">
+                <circle class="progress-ring-bg" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                <circle class="progress-ring-bar" id="cpu-ring" stroke="url(#cpuGrad)" stroke-width="8" stroke-dasharray="314.15" stroke-dashoffset="314.15" stroke-linecap="round" fill="transparent" r="50" cx="60" cy="60"/>
+                <defs>
+                  <linearGradient id="cpuGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00f0ff" />
+                    <stop offset="100%" stop-color="#7000ff" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="gauge-val" id="cpu-val">0%</div>
+            </div>
+            <p class="tele-detail text-center">Frecuencia dinámica de núcleos activa.</p>
+          </div>
+
+          <!-- RAM Card -->
+          <div class="card tele-card animate-slide-up" style="animation-delay: 0.2s">
+            <div class="card-header">
+              <h3>Memoria RAM</h3>
+              <span class="metric-label">RAM</span>
+            </div>
+            <div class="gauge-container">
+              <svg class="progress-ring" width="120" height="120">
+                <circle class="progress-ring-bg" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                <circle class="progress-ring-bar" id="ram-ring" stroke="url(#ramGrad)" stroke-width="8" stroke-dasharray="314.15" stroke-dashoffset="314.15" stroke-linecap="round" fill="transparent" r="50" cx="60" cy="60"/>
+                <defs>
+                  <linearGradient id="ramGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#d946ef" />
+                    <stop offset="100%" stop-color="#7000ff" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="gauge-val" id="ram-val">0%</div>
+            </div>
+            <p class="tele-detail text-center" id="ram-usage-text">Cargando...</p>
+          </div>
+
+          <!-- Storage Card -->
+          <div class="card tele-card animate-slide-up" style="animation-delay: 0.3s">
+            <div class="card-header">
+              <h3>Disco Local (C:)</h3>
+              <span class="metric-label">Disco</span>
+            </div>
+            <div class="gauge-container">
+              <svg class="progress-ring" width="120" height="120">
+                <circle class="progress-ring-bg" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="transparent" r="50" cx="60" cy="60"/>
+                <circle class="progress-ring-bar" id="disk-ring" stroke="url(#diskGrad)" stroke-width="8" stroke-dasharray="314.15" stroke-dashoffset="314.15" stroke-linecap="round" fill="transparent" r="50" cx="60" cy="60"/>
+                <defs>
+                  <linearGradient id="diskGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#eab308" />
+                    <stop offset="100%" stop-color="#ea580c" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="gauge-val" id="disk-val">0%</div>
+            </div>
+            <p class="tele-detail text-center" id="disk-usage-text">Cargando...</p>
+          </div>
+        </div>
+
+        <!-- Big Scan / Action Area -->
+        <div class="dashboard-hero-section card animate-slide-up" style="animation-delay: 0.4s">
+          <div class="hero-text-content">
+            <h2>¿Listo para optimizar tu sistema?</h2>
+            <p>Escanear el sistema buscará archivos temporales obsoletos, cachés bloqueadas del navegador, volcados de registros innecesarios y archivos del sistema descartados que consumen el espacio de tu PC.</p>
+            <div class="hero-stats-row">
+              <div class="hero-stat-badge">
+                <span class="label">Último Análisis</span>
+                <span class="val" id="last-scan-badge">Nunca</span>
+              </div>
+              <div class="hero-stat-badge">
+                <span class="label">Salud Almacenamiento</span>
+                <span class="val text-cyan" id="health-score-badge">---</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-button-wrapper">
+            <button class="huge-glowing-button" id="btn-dashboard-scan">
+              <span class="btn-ripple"></span>
+              <span class="btn-inner">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                </svg>
+                <span>Analizar Sistema</span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. CLEANER VIEW -->
+      <section id="tab-cleaner" class="tab-view">
+        <div class="view-header">
+          <h1>Limpiador de Almacenamiento</h1>
+          <p class="subtitle">Selecciona los elementos de caché y archivos basura que deseas eliminar del disco.</p>
+        </div>
+
+        <div class="cleaner-layout">
+          <!-- Selection Checklist -->
+          <div class="checklist-container card">
+            <div class="checklist-header">
+              <span class="title">Categorías de Archivos</span>
+              <button class="secondary-btn" id="btn-select-all">Seleccionar Todos</button>
+            </div>
+
+            <div class="category-list">
+              <!-- Item: User Temp -->
+              <label class="category-item">
+                <div class="item-checkbox-wrapper">
+                  <input type="checkbox" checked value="userTemp" class="cleaner-checkbox">
+                  <span class="custom-checkbox"></span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title-row">
+                    <span class="item-name">Archivos Temporales de Usuario</span>
+                    <span class="badge size-badge" id="size-userTemp">Pendiente</span>
+                  </div>
+                  <span class="item-desc">Archivos temporales creados por programas en AppData\Local\Temp.</span>
+                </div>
+              </label>
+
+              <!-- Item: System Temp -->
+              <label class="category-item">
+                <div class="item-checkbox-wrapper">
+                  <input type="checkbox" checked value="systemTemp" class="cleaner-checkbox">
+                  <span class="custom-checkbox"></span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title-row">
+                    <span class="item-name">Temporales del Sistema Windows</span>
+                    <span class="badge size-badge" id="size-systemTemp">Pendiente</span>
+                  </div>
+                  <span class="item-desc">Caché y temporales creados en Windows\Temp por el sistema operativo.</span>
+                </div>
+              </label>
+
+              <!-- Item: Recycle Bin -->
+              <label class="category-item">
+                <div class="item-checkbox-wrapper">
+                  <input type="checkbox" value="recycleBin" class="cleaner-checkbox">
+                  <span class="custom-checkbox"></span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title-row">
+                    <span class="item-name">Papelera de Reciclaje</span>
+                    <span class="badge size-badge badge-orange" id="size-recycleBin">Pendiente</span>
+                  </div>
+                  <span class="item-desc">Archivos eliminados que aún permanecen retenidos para restauración.</span>
+                </div>
+              </label>
+
+              <!-- Item: Downloads -->
+              <label class="category-item">
+                <div class="item-checkbox-wrapper">
+                  <input type="checkbox" value="downloads" class="cleaner-checkbox">
+                  <span class="custom-checkbox"></span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title-row">
+                    <span class="item-name">Carpeta de Descargas</span>
+                    <span class="badge size-badge badge-orange" id="size-downloads">Pendiente</span>
+                  </div>
+                  <span class="item-desc">Limpia todo el contenido de tu carpeta C:\Users\Usuario\Downloads. (⚠️ Cuidado: Se eliminarán tus descargas).</span>
+                </div>
+              </label>
+
+              <!-- Item: Prefetch -->
+              <label class="category-item">
+                <div class="item-checkbox-wrapper">
+                  <input type="checkbox" checked value="prefetch" class="cleaner-checkbox">
+                  <span class="custom-checkbox"></span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title-row">
+                    <span class="item-name">Archivos Prefetch</span>
+                    <span class="badge size-badge" id="size-prefetch">Pendiente</span>
+                  </div>
+                  <span class="item-desc">Datos de carga previa en Windows\Prefetch creados al iniciar aplicaciones.</span>
+                </div>
+              </label>
+
+              <!-- Item: Logs -->
+              <label class="category-item">
+                <div class="item-checkbox-wrapper">
+                  <input type="checkbox" checked value="systemLogs" class="cleaner-checkbox">
+                  <span class="custom-checkbox"></span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title-row">
+                    <span class="item-name">Archivos de Registro (Logs)</span>
+                    <span class="badge size-badge" id="size-systemLogs">Pendiente</span>
+                  </div>
+                  <span class="item-desc">Registros de eventos de Windows y telemetría acumulada en Windows\Logs.</span>
+                </div>
+              </label>
+
+              <!-- Item: Chrome Cache -->
+              <label class="category-item">
+                <div class="item-checkbox-wrapper">
+                  <input type="checkbox" checked value="chromeCache" class="cleaner-checkbox">
+                  <span class="custom-checkbox"></span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title-row">
+                    <span class="item-name">Caché de Google Chrome</span>
+                    <span class="badge size-badge" id="size-chromeCache">Pendiente</span>
+                  </div>
+                  <span class="item-desc">Caché de navegación cargada al visitar sitios web en Google Chrome.</span>
+                </div>
+              </label>
+
+              <!-- Item: Edge Cache -->
+              <label class="category-item">
+                <div class="item-checkbox-wrapper">
+                  <input type="checkbox" checked value="edgeCache" class="cleaner-checkbox">
+                  <span class="custom-checkbox"></span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title-row">
+                    <span class="item-name">Caché de Microsoft Edge</span>
+                    <span class="badge size-badge" id="size-edgeCache">Pendiente</span>
+                  </div>
+                  <span class="item-desc">Archivos temporales del navegador nativo de Windows (Microsoft Edge).</span>
+                </div>
+              </label>
+
+              <!-- Item: DNS Cache -->
+              <label class="category-item">
+                <div class="item-checkbox-wrapper">
+                  <input type="checkbox" value="dnsCache" class="cleaner-checkbox">
+                  <span class="custom-checkbox"></span>
+                </div>
+                <div class="item-details">
+                  <div class="item-title-row">
+                    <span class="item-name">Vaciar Caché de DNS</span>
+                    <span class="badge size-badge badge-blue">Virtual</span>
+                  </div>
+                  <span class="item-desc">Limpia el registro de resolución de red local para solucionar problemas de conexión.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Operations Console Panel -->
+          <div class="clean-console-panel card">
+            <h3>Centro de Control de Purga</h3>
+            <p class="console-desc">Ejecuta un escaneo previo para calcular el volumen exacto ocupado en tu disco duro.</p>
+            
+            <div class="action-buttons-stack">
+              <button class="primary-btn pulse" id="btn-clean-scan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                Analizar Selección
+              </button>
+
+              <button class="danger-btn" id="btn-clean-execute" disabled>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 6h18"></path>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                Iniciar Limpieza
+              </button>
+            </div>
+
+            <!-- Terminal Output / Clean Report Card -->
+            <div class="clean-console-report" id="console-output">
+              <div class="terminal-header">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">Salida del Proceso</span>
+              </div>
+              <div class="terminal-body" id="terminal-log">
+                Esperando análisis del sistema...
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. TASK MANAGER VIEW -->
+      <section id="tab-processes" class="tab-view">
+        <div class="view-header">
+          <h1>Administrador de Tareas Activas</h1>
+          <p class="subtitle">Monitorea y cierra los procesos de Windows que más recursos y memoria consumen.</p>
+        </div>
+
+        <div class="processes-layout card">
+          <div class="process-toolbar">
+            <div class="search-wrapper">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="input-process-search" placeholder="Filtrar proceso por nombre...">
+            </div>
+            
+            <button class="secondary-btn" id="btn-refresh-processes">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+              </svg>
+              Actualizar
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="process-table" id="table-active-processes">
+              <thead>
+                <tr>
+                  <th>Proceso</th>
+                  <th>PID</th>
+                  <th>CPU Estimado (s)</th>
+                  <th>Memoria (RAM)</th>
+                  <th class="text-right">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="processes-tbody">
+                <tr>
+                  <td colspan="5" class="text-center py-4">Cargando lista de procesos de Windows...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. STARTUP APPS VIEW -->
+      <section id="tab-startup" class="tab-view">
+        <div class="view-header">
+          <h1>Programas de Inicio de Windows</h1>
+          <p class="subtitle">Monitorea las aplicaciones configuradas para arrancar de forma automática junto al equipo.</p>
+        </div>
+
+        <div class="startup-explanation-card card mb-4">
+          <div class="flex-info">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2" class="mr-3">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <div>
+              <h4>¿Por qué influye en el rendimiento?</h4>
+              <p>Las aplicaciones de inicio ralentizan de forma directa el arranque inicial de Windows y aumentan de forma constante el uso residual de RAM en segundo plano.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="startup-layout card">
+          <div class="process-toolbar">
+            <span class="table-title">Aplicaciones Detectadas</span>
+            <button class="secondary-btn" id="btn-refresh-startup">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+              </svg>
+              Escanear Inicio
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="process-table" id="table-startup-apps">
+              <thead>
+                <tr>
+                  <th>Aplicación</th>
+                  <th>Ubicación de Carga</th>
+                  <th>Comando / Ruta Ejecutable</th>
+                </tr>
+              </thead>
+              <tbody id="startup-tbody">
+                <tr>
+                  <td colspan="3" class="text-center py-4">Cargando aplicaciones de inicio...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. RECOMMENDATIONS VIEW -->
+      <section id="tab-recommendations" class="tab-view">
+        <div class="view-header">
+          <h1>Recomendaciones de Optimización</h1>
+          <p class="subtitle">Alertas personalizadas y consejos del sistema basados en tu estado de almacenamiento actual.</p>
+        </div>
+
+        <div class="recommendations-container" id="recommendations-box">
+          <!-- Dynamic cards will be generated here -->
+          <div class="card recom-card info-card">
+            <div class="recom-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div class="recom-content">
+              <h3>Análisis Pendiente</h3>
+              <p>Por favor, realiza un análisis en la pestaña de <strong>Dashboard</strong> o <strong>Limpiador</strong> para generar recomendaciones inteligentes de espacio y optimización.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
