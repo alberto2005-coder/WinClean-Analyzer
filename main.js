@@ -4,6 +4,57 @@ const fs = require('fs');
 const os = require('os');
 const { exec } = require('child_process');
 
+// --- SCAN SYSTEM FILE CACHES & TEMPS ---
+const scanPaths = {
+  userTemp: process.env.TEMP,
+  systemTemp: 'C:\\Windows\\Temp',
+  prefetch: 'C:\\Windows\\Prefetch',
+  systemLogs: 'C:\\Windows\\Logs',
+  chromeCache: path.join(process.env.USERPROFILE, 'AppData\\Local\\Google\\Chrome\\User Data\\Default\\Cache\\Cache_Data'),
+  edgeCache: path.join(process.env.USERPROFILE, 'AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Cache\\Cache_Data'),
+  downloads: path.join(process.env.USERPROFILE, 'Downloads')
+};
+
+// --- CHECK FOR CLI AUTOCLEAN FLAG (MANTENIMIENTO SILENCIOSO) ---
+if (process.argv.includes('--autoclean')) {
+  app.whenReady().then(async () => {
+    const defaultCategories = ['userTemp', 'systemTemp', 'prefetch', 'systemLogs', 'chromeCache', 'edgeCache', 'dnsCache'];
+    let freedBytes = 0;
+    
+    // Clean folders
+    for (const category of defaultCategories) {
+      if (scanPaths[category]) {
+        try {
+          const cleanResult = await cleanFolderAsync(scanPaths[category]);
+          freedBytes += cleanResult.deletedSize;
+        } catch (e) {}
+      }
+    }
+    
+    // Clean Recycle Bin
+    try {
+      await runPowerShell(`Clear-RecycleBin -Force -ErrorAction SilentlyContinue`);
+    } catch (e) {}
+    
+    // Clean DNS
+    try {
+      await runPowerShell('ipconfig /flushdns');
+    } catch (e) {}
+    
+    // Log the result to a small file in user AppData
+    try {
+      const logDir = path.join(app.getPath('userData'), 'logs');
+      if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+      const logPath = path.join(logDir, 'autoclean.log');
+      const logMessage = `[${new Date().toISOString()}] Autoclean completed. Freed ${(freedBytes / (1024 * 1024)).toFixed(2)} MB.\n`;
+      fs.appendFileSync(logPath, logMessage);
+    } catch (err) {}
+    
+    // Quit without showing the UI!
+    app.quit();
+  });
+}
+
 let mainWindow;
 
 function createWindow() {
@@ -188,16 +239,7 @@ ipcMain.handle('get-startup-apps', async () => {
   }
 });
 
-// --- SCAN SYSTEM FILE CACHES & TEMPS ---
-const scanPaths = {
-  userTemp: process.env.TEMP,
-  systemTemp: 'C:\\Windows\\Temp',
-  prefetch: 'C:\\Windows\\Prefetch',
-  systemLogs: 'C:\\Windows\\Logs',
-  chromeCache: path.join(process.env.USERPROFILE, 'AppData\\Local\\Google\\Chrome\\User Data\\Default\\Cache\\Cache_Data'),
-  edgeCache: path.join(process.env.USERPROFILE, 'AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Cache\\Cache_Data'),
-  downloads: path.join(process.env.USERPROFILE, 'Downloads')
-};
+
 
 async function scanFolderAsync(dirPath) {
   let size = 0;
@@ -373,4 +415,109 @@ ipcMain.handle('clean-system', async (event, categories) => {
 
   report.freedMB = (report.freedBytes / (1024 * 1024)).toFixed(2);
   return report;
+});
+
+// --- APPLY PRIVACY & SPEED BOOST REGISTRY & SERVICE TWEAKS ---
+ipcMain.handle('apply-privacy-boost', async (event, toggles) => {
+  const reports = [];
+  
+  // 1. Disable Telemetry Service (DiagTrack) & Error Reporting (WerSvc)
+  if (toggles.telemetry) {
+    await runPowerShell(`Stop-Service -Name DiagTrack -ErrorAction SilentlyContinue; Set-Service -Name DiagTrack -StartupType Disabled -ErrorAction SilentlyContinue`);
+    await runPowerShell(`Stop-Service -Name WerSvc -ErrorAction SilentlyContinue; Set-Service -Name WerSvc -StartupType Disabled -ErrorAction SilentlyContinue`);
+    reports.push('Servicios de Telemetría (DiagTrack/WerSvc) desactivados y deshabilitados.');
+  } else {
+    await runPowerShell(`Set-Service -Name DiagTrack -StartupType Automatic -ErrorAction SilentlyContinue; Start-Service -Name DiagTrack -ErrorAction SilentlyContinue`);
+    await runPowerShell(`Set-Service -Name WerSvc -StartupType Manual -ErrorAction SilentlyContinue`);
+    reports.push('Servicios de Telemetría restaurados a los valores estándar de Windows.');
+  }
+  
+  // 2. Disable Cortana
+  if (toggles.cortana) {
+    await runPowerShell(`New-Item -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search" -Force -ErrorAction SilentlyContinue; New-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search" -Name "AllowCortana" -Value 0 -PropertyType DWORD -Force -ErrorAction SilentlyContinue`);
+    reports.push('Búsqueda y telemetría de Cortana bloqueadas en el registro.');
+  } else {
+    await runPowerShell(`Remove-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search" -Name "AllowCortana" -ErrorAction SilentlyContinue`);
+    reports.push('Cortana restaurada a los valores de registro predeterminados.');
+  }
+  
+  // 3. Optimize Windows Start suggestions (disable Bing Search suggestions in Start Menu)
+  if (toggles.search) {
+    await runPowerShell(`New-Item -Path "HKCU:\\Software\\Policies\\Microsoft\\Windows\\Explorer" -Force -ErrorAction SilentlyContinue; New-ItemProperty -Path "HKCU:\\Software\\Policies\\Microsoft\\Windows\\Explorer" -Name "DisableSearchBoxSuggestions" -Value 1 -PropertyType DWORD -Force -ErrorAction SilentlyContinue`);
+    reports.push('Sugerencias y anuncios de búsqueda de Bing deshabilitados en el menú Inicio.');
+  } else {
+    await runPowerShell(`Remove-ItemProperty -Path "HKCU:\\Software\\Policies\\Microsoft\\Windows\\Explorer" -Name "DisableSearchBoxSuggestions" -ErrorAction SilentlyContinue`);
+    reports.push('Sugerencias de búsqueda del menú Inicio restauradas.');
+  }
+  
+  return { success: true, reports };
+});
+
+// --- SAVE AUTOMATED MAINTENANCE SCHEDULE IN WINDOWS TASK SCHEDULER ---
+ipcMain.handle('save-schedule', async (event, scheduleType) => {
+  const exePath = app.getPath('exe');
+  
+  // Clean up any previously created task
+  await runPowerShell(`Unregister-ScheduledTask -TaskName "WinCleanAnalyzer_AutoClean" -Confirm:$false -ErrorAction SilentlyContinue`);
+  
+  if (scheduleType === 'off') {
+    return { success: true, message: 'Mantenimiento automático desactivado con éxito.' };
+  }
+  
+  let triggerArgs = '';
+  let msg = '';
+  if (scheduleType === 'daily') {
+    triggerArgs = '-Daily -At 03:00';
+    msg = 'Mantenimiento diario activado (3:00 AM).';
+  } else if (scheduleType === 'weekly') {
+    triggerArgs = '-Weekly -DaysOfWeek Sunday -At 03:00';
+    msg = 'Mantenimiento semanal activado (Domingos 3:00 AM).';
+  } else if (scheduleType === 'monthly') {
+    triggerArgs = '-Monthly -At 03:00';
+    msg = 'Mantenimiento mensual activado (Días 1 a las 3:00 AM).';
+  }
+  
+  // Create task using PowerShell
+  const registerCmd = `Register-ScheduledTask -TaskName "WinCleanAnalyzer_AutoClean" -Trigger (New-ScheduledTaskTrigger ${triggerArgs}) -Action (New-ScheduledTaskAction -Execute "${exePath}" -Argument "--autoclean") -Settings (New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries) -Force -ErrorAction SilentlyContinue`;
+  await runPowerShell(registerCmd);
+  
+  return { success: true, message: `${msg} Se ejecutará de forma silenciosa en segundo plano.` };
+});
+
+// --- GET CURRENT PRIVACY & SCHEDULER SYSTEM STATE ---
+ipcMain.handle('get-privacy-state', async () => {
+  // Check telemetry service status
+  const telemetryStatusStr = await runPowerShell(`(Get-Service -Name DiagTrack -ErrorAction SilentlyContinue).StartType`);
+  const isTelemetryDisabled = telemetryStatusStr.trim() === 'Disabled';
+  
+  // Check Cortana registry value
+  const cortanaVal = await runPowerShell(`(Get-ItemProperty -Path "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search" -Name "AllowCortana" -ErrorAction SilentlyContinue).AllowCortana`);
+  const isCortanaDisabled = cortanaVal.trim() === '0';
+  
+  // Check Search suggestions registry value
+  const searchVal = await runPowerShell(`(Get-ItemProperty -Path "HKCU:\\Software\\Policies\\Microsoft\\Windows\\Explorer" -Name "DisableSearchBoxSuggestions" -ErrorAction SilentlyContinue).DisableSearchBoxSuggestions`);
+  const isSearchSuggestionsDisabled = searchVal.trim() === '1';
+  
+  // Check active schedule
+  const scheduleTaskExists = await runPowerShell(`Get-ScheduledTask -TaskName "WinCleanAnalyzer_AutoClean" -ErrorAction SilentlyContinue`);
+  let activeSchedule = 'off';
+  if (scheduleTaskExists) {
+    const triggerText = await runPowerShell(`(Get-ScheduledTask -TaskName "WinCleanAnalyzer_AutoClean" -ErrorAction SilentlyContinue).Triggers.ToString()`);
+    if (triggerText.includes('Weekly') || triggerText.includes('semanal') || triggerText.includes('7')) {
+      activeSchedule = 'weekly';
+    } else if (triggerText.includes('Daily') || triggerText.includes('diario') || triggerText.includes('1')) {
+      activeSchedule = 'daily';
+    } else if (triggerText.includes('Monthly') || triggerText.includes('mensual') || triggerText.includes('30')) {
+      activeSchedule = 'monthly';
+    } else {
+      activeSchedule = 'weekly';
+    }
+  }
+  
+  return {
+    telemetry: isTelemetryDisabled,
+    cortana: isCortanaDisabled,
+    search: isSearchSuggestionsDisabled,
+    schedule: activeSchedule
+  };
 });

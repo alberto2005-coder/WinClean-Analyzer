@@ -640,6 +640,114 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- OPTIMIZER FRONTEND CONTROL (ROADMAP TASK ACCOMPLISHED!) ---
+  const chkTelemetry = document.getElementById('chk-telemetry');
+  const chkCortanaReal = document.getElementById('chk-cortana');
+  const chkSearchSuggestions = document.getElementById('chk-search-suggestions');
+  const btnApplyPrivacy = document.getElementById('btn-apply-privacy');
+  const privacyLog = document.getElementById('privacy-log');
+  
+  const selectSchedule = document.getElementById('select-schedule');
+  const btnSaveSchedule = document.getElementById('btn-save-schedule');
+  const scheduleIndicator = document.getElementById('schedule-indicator');
+  const scheduleText = document.getElementById('schedule-text');
+
+  async function loadPrivacyAndScheduleState() {
+    try {
+      const state = await window.winCleanAPI.getPrivacyState();
+      if (chkTelemetry) chkTelemetry.checked = state.telemetry;
+      if (chkCortanaReal) chkCortanaReal.checked = state.cortana;
+      if (chkSearchSuggestions) chkSearchSuggestions.checked = state.search;
+      
+      if (selectSchedule) selectSchedule.value = state.schedule;
+      
+      updateScheduleBadge(state.schedule);
+    } catch (err) {
+      console.error('Error loading privacy state:', err);
+    }
+  }
+
+  function updateScheduleBadge(scheduleType) {
+    if (!scheduleIndicator || !scheduleText) return;
+    if (scheduleType === 'off') {
+      scheduleIndicator.style.background = 'var(--text-muted)';
+      scheduleText.textContent = 'Desactivado';
+      scheduleText.style.color = 'var(--text-sub)';
+    } else {
+      scheduleIndicator.style.background = 'var(--color-emerald)';
+      let label = 'Activo';
+      if (scheduleType === 'daily') label = 'Activo (Diario)';
+      if (scheduleType === 'weekly') label = 'Activo (Semanal)';
+      if (scheduleType === 'monthly') label = 'Activo (Mensual)';
+      scheduleText.textContent = label;
+      scheduleText.style.color = 'var(--color-emerald)';
+    }
+  }
+
+  // Load state when tab is clicked
+  const optTab = Array.from(tabs).find(t => t.getAttribute('data-tab') === 'tab-optimizer');
+  if (optTab) {
+    optTab.addEventListener('click', loadPrivacyAndScheduleState);
+  }
+
+  // Hook apply privacy button
+  if (btnApplyPrivacy) {
+    btnApplyPrivacy.addEventListener('click', async () => {
+      btnApplyPrivacy.disabled = true;
+      btnApplyPrivacy.textContent = 'Aplicando Cambios...';
+      if (privacyLog) {
+        privacyLog.style.display = 'block';
+        privacyLog.textContent = '> Conectando con servicios de Windows...\n> Ejecutando scripts de optimización asíncronos...';
+      }
+      
+      try {
+        const toggles = {
+          telemetry: chkTelemetry ? chkTelemetry.checked : false,
+          cortana: chkCortanaReal ? chkCortanaReal.checked : false,
+          search: chkSearchSuggestions ? chkSearchSuggestions.checked : false
+        };
+        
+        const response = await window.winCleanAPI.applyPrivacyBoost(toggles);
+        if (response.success) {
+          if (privacyLog) {
+            privacyLog.textContent = response.reports.map(r => `[ÉXITO] ${r}`).join('\n') + '\n> ¡Optimización aplicada correctamente!';
+          }
+        }
+      } catch (err) {
+        if (privacyLog) privacyLog.textContent = `[ERROR] No se pudieron aplicar los cambios:\n${err.message}`;
+      } finally {
+        btnApplyPrivacy.disabled = false;
+        btnApplyPrivacy.textContent = 'Aplicar Cambios de Privacidad';
+      }
+    });
+  }
+
+  // Hook save schedule button
+  if (btnSaveSchedule && selectSchedule) {
+    btnSaveSchedule.addEventListener('click', async () => {
+      btnSaveSchedule.disabled = true;
+      const originalText = btnSaveSchedule.textContent;
+      btnSaveSchedule.textContent = 'Guardando...';
+      
+      try {
+        const scheduleVal = selectSchedule.value;
+        const response = await window.winCleanAPI.saveSchedule(scheduleVal);
+        if (response.success) {
+          updateScheduleBadge(scheduleVal);
+          alert(response.message);
+        }
+      } catch (err) {
+        alert('Error al registrar la tarea programada: ' + err.message);
+      } finally {
+        btnSaveSchedule.disabled = false;
+        btnSaveSchedule.textContent = originalText;
+      }
+    });
+  }
+
+  // Initial load
+  setTimeout(loadPrivacyAndScheduleState, 1500);
+
   // --- INITIALIZE SYSTEM ---
   // Start dashboard active stats telemetry loop
   startTelemetry();

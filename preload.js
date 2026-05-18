@@ -9,5 +9,8 @@ contextBridge.exposeInMainWorld('winCleanAPI', {
   getStartupApps: () => ipcRenderer.invoke('get-startup-apps'),
   minimize: () => ipcRenderer.invoke('window-minimize'),
   maximize: () => ipcRenderer.invoke('window-maximize'),
-  close: () => ipcRenderer.invoke('window-close')
+  close: () => ipcRenderer.invoke('window-close'),
+  applyPrivacyBoost: (toggles) => ipcRenderer.invoke('apply-privacy-boost', toggles),
+  saveSchedule: (scheduleType) => ipcRenderer.invoke('save-schedule', scheduleType),
+  getPrivacyState: () => ipcRenderer.invoke('get-privacy-state')
 });

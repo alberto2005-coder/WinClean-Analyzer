@@ -2,16 +2,19 @@
 
 Este documento detalla las ideas, optimizaciones avanzadas y características planificadas para expandir **WinClean Analyzer** de un limpiador de disco a una suite completa de optimización y mantenimiento de Windows de grado industrial.
 
+> [!NOTE]
+> Las tareas marcadas como ~~tachadas~~ ya han sido completamente implementadas y están operativas de forma nativa en la nueva pestaña de **Optimización** del programa.
+
 ---
 
 ## 📅 Roadmap de Módulos Planificados
 
-### 1. 🕒 Programador de Limpieza Automatizada (Mantenimiento Silencioso)
-* **Descripción**: Permitir al usuario programar limpiezas automáticas de temporales en segundo plano sin interrumpir su flujo de trabajo.
-* **Detalles Técnicos**:
-  - Creación de un servicio en segundo plano de Node.js o una tarea programada oficial en Windows mediante PowerShell (`Register-ScheduledTask`).
-  - Limpiezas automáticas semanales o cuando el almacenamiento disponible en el disco `C:` caiga por debajo del 10%.
-  - Notificaciones nativas de Windows (`Notification` API de Electron) para avisar al usuario de los gigabytes liberados de forma silenciosa.
+### 1. ~~🕒 Programador de Limpieza Automatizada (Mantenimiento Silencioso) [COMPLETADO]~~
+* ~~**Descripción**: Permitir al usuario programar limpiezas automáticas de temporales en segundo plano sin interrumpir su flujo de trabajo.~~
+* ~~**Detalles Técnicos**:~~
+  - ~~Intercepción CLI `--autoclean` en `main.js` para ejecutar limpiezas silenciosas en segundo plano.~~
+  - ~~Registro y automatización de tareas en Windows Task Scheduler desde PowerShell (`Register-ScheduledTask`).~~
+  - ~~Configuración en un clic desde la nueva pestaña visual "Optimización" con frecuencias Diario, Semanal y Mensual.~~
 
 ### 2. 🗃️ Limpiador Profundo de Registro de Windows (Registry Cleaner)
 * **Descripción**: Analizar y purgar entradas de registro huérfanas, accesos directos rotos y restos de desinstalaciones pasadas.
@@ -31,11 +34,12 @@ Este documento detalla las ideas, optimizaciones avanzadas y características pl
   - Algoritmo de hashing asíncrono (`crypto` de Node.js con `MD5`) procesando archivos en trozos sin bloquear la interfaz.
   - Selector visual intuitivo tipo carrusel para comparar previsualizaciones de fotos duplicadas antes de eliminarlas de forma masiva.
 
-### 🔒 5. Optimizador de Privacidad y Telemetría de Windows
-* **Descripción**: Un panel de un solo clic para desactivar la recopilación de datos de Microsoft, anuncios personalizados y procesos espía en segundo plano.
-* **Detalles Técnicos**:
-  - Desactivación segura de servicios de telemetría de Windows como el servicio `DiagTrack` (Experiencias del usuario y telemetría asociadas) mediante comandos `scconfig` y cambios en el Registro.
-  - Desconexión de Cortana, informes de error automáticos y telemetría de navegadores para maximizar tanto la privacidad del usuario como la velocidad del procesador.
+### 5. ~~🔒 Optimizador de Privacidad y Telemetría de Windows [COMPLETADO]~~
+* ~~**Descripción**: Un panel de un solo clic para desactivar la recopilación de datos de Microsoft, anuncios personalizados y procesos espía en segundo plano.~~
+* ~~**Detalles Técnicos**:~~
+  - ~~Desactivación segura y persistente de servicios de telemetría de Windows (`DiagTrack` y `WerSvc`) desde PowerShell.~~
+  - ~~Inyección y modificación de directivas en el registro de Windows para bloquear telemetría en segundo plano de Cortana (`AllowCortana`).~~
+  - ~~Optimización del menú Inicio de Windows deshabilitando anuncios dinámicos e integración de búsquedas de Bing (`DisableSearchBoxSuggestions`).~~
 
 ---
 
