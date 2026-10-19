@@ -8,9 +8,9 @@ Desarrollado con pasión por **[Alberto Ortiz](https://github.com/alberto2005-co
 
 ## 🎨 Vista General y Filosofía de Diseño
 
-**WinClean Analyzer** es una herramienta de optimización de sistema que rompe con la estética aburrida y tradicional de las herramientas del sistema. Combina un rendimiento de nivel nativo mediante scripts en segundo plano con una interfaz de usuario visualmente impresionante.
+**WinClean Analyzer** es una herramienta de optimización de sistema que rompe con la estética aburrida y tradicional de las herramientas del sistema. Combina un rendimiento de nivel nativo media[...]
 
-* **Glassmorphism UI**: Paneles de control traslúcidos con efectos de desenfoque de cristal (`backdrop-filter`).
+* **Glassmorphism UI**: Paneles de control translúcidos con efectos de desenfoque de cristal (`backdrop-filter`).
 * **OLED Cyberpunk Theme**: Paleta oscura profunda enriquecida con gradientes vibrantes y luces de neón en cyan, rosa y naranja.
 * **Telemetría Nivel OS 60fps**: Medidores de rendimiento animados de CPU, RAM y almacenamiento en tiempo real a través de gráficos dinámicos SVG nativos.
 * **Consola de Proceso Virtual**: Una terminal interactiva integrada estilo hacker que reporta el progreso preciso y detalla la liberación de megabytes.
@@ -70,7 +70,7 @@ Para ejecutar este proyecto en tu computadora necesitas tener instalado [Node.js
 
 ### 📦 Compilación y Generación del Ejecutable (.EXE):
 
-Al estar desarrollado con Electron, puedes empaquetar toda la aplicación en un **único archivo ejecutable (.exe) portátil** (sin necesidad de instalador) para llevar en un USB y usar en cualquier PC con Windows:
+Al estar desarrollado con Electron, puedes empaquetar toda la aplicación en un **único archivo ejecutable (.exe) portátil** (sin necesidad de instalador) para llevar en un USB y usar en cualquier equipo.
 
 1. **Instala el empaquetador** `electron-builder` en tu entorno (una sola vez):
    ```bash
@@ -85,7 +85,7 @@ Al estar desarrollado con Electron, puedes empaquetar toda la aplicación en un 
 3. **¡Listo!** En la raíz de tu proyecto se creará una carpeta llamada `dist/` y dentro de ella tendrás el ejecutable **`WinClean Analyzer.exe`** compilado y listo para abrir en cualquier equipo.
 
 > [!TIP]
-> **Privilegios de Administrador**: Para realizar limpiezas exhaustivas en directorios protegidos del sistema como `Windows\Prefetch`, te recomendamos ejecutar la consola (o el archivo `.exe` generado) con **permisos de administrador**.
+> **Privilegios de Administrador**: Para realizar limpiezas exhaustivas en directorios protegidos del sistema como `Windows\Prefetch`, te recomendamos ejecutar la consola (o el archivo `.exe` generado) con permisos de administrador.
 
 ---
 
@@ -103,10 +103,48 @@ Al estar desarrollado con Electron, puedes empaquetar toda la aplicación en un 
 
 Este proyecto es de uso gratuito y libre. Se permite clonarlo, utilizarlo y realizar bifurcaciones o adaptaciones ("forks") de forma totalmente gratuita bajo las siguientes condiciones obligatorias:
 
-1. **Atribución Obligatoria**: Cualquier copia o fork debe mantener de forma prominente e inalterada el crédito y enlaces a **[Alberto Ortiz](https://github.com/alberto2005-coder)** tanto en el código fuente como en el badge de autoría de la interfaz visual.
+1. **Atribución Obligatoria**: Cualquier copia o fork debe mantener de forma prominente e inalterada el crédito y enlaces a **[Alberto Ortiz](https://github.com/alberto2005-coder)** tanto en el código fuente como en el badge de autor de la interfaz visual.
 2. **Claridad en Cambios**: Si realizas modificaciones en el código, debes declarar explícitamente en tu documentación (README) y en la pantalla que tu proyecto es un trabajo derivado basado en la obra original de Alberto Ortiz.
 3. **Uso No Comercial**: Queda estrictamente prohibido vender, sublicenciar o lucrarse económicamente con este software o sus derivados sin la autorización previa por escrito del autor.
 
 Para conocer todos los términos legales detallados, consulta el archivo de [LICENCIA](file:///c:/Users/alors/Downloads/WinClean-Analyzer/LICENSE).
 
 Desarrollado con 💻 y 🧹 por **Alberto Ortiz**.
+
+---
+
+# English Version
+
+## Overview
+
+**WinClean Analyzer** is a system optimization tool designed to break the visual boredom of traditional system utilities. It combines native-level performance with a premium interface and advanced cleaning features.
+
+## Main Features
+
+- Advanced disk cleaner for temporary files, browser cache, downloads, and logs
+- Smart task manager with real-time process monitoring and forced termination
+- Startup apps manager for Windows boot optimization
+- Recommendations panel to guide cleanup actions
+
+## Requirements
+
+- [Node.js](https://nodejs.org/)
+- Windows 10/11
+
+## Run locally
+
+```bash
+git clone https://github.com/alberto2005-coder/WinClean-Analyzer.git
+cd WinClean-Analyzer
+npm install
+npm start
+```
+
+## Build
+
+```bash
+npm install --save-dev electron-builder
+npm run dist
+```
+
+This bilingual README keeps the original Spanish content first and adds the English overview below for broader accessibility.
