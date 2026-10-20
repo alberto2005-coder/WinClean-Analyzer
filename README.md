@@ -99,15 +99,12 @@ Al estar desarrollado con Electron, puedes empaquetar toda la aplicación en un 
 
 ---
 
-## 📝 Licencia y Uso Compartido (Forks)
+## 📝 Licencia
 
-Este proyecto es de uso gratuito y libre. Se permite clonarlo, utilizarlo y realizar bifurcaciones o adaptaciones ("forks") de forma totalmente gratuita bajo las siguientes condiciones obligatorias:
+Este proyecto está bajo la **Licencia GPL-3.0**. Puedes usarlo, modificarlo y redistribuirlo libremente, incluso con fines comerciales, siempre que publicues el código fuente de tus versiones modificadas bajo la misma licencia (copyleft) y conserves el crédito a **[Alberto Ortiz](https://github.com/alberto2005-coder)**.
 
-1. **Atribución Obligatoria**: Cualquier copia o fork debe mantener de forma prominente e inalterada el crédito y enlaces a **[Alberto Ortiz](https://github.com/alberto2005-coder)** tanto en el código fuente como en el badge de autor de la interfaz visual.
-2. **Claridad en Cambios**: Si realizas modificaciones en el código, debes declarar explícitamente en tu documentación (README) y en la pantalla que tu proyecto es un trabajo derivado basado en la obra original de Alberto Ortiz.
-3. **Uso No Comercial**: Queda estrictamente prohibido vender, sublicenciar o lucrarse económicamente con este software o sus derivados sin la autorización previa por escrito del autor.
+Consulta el archivo de [LICENSE](LICENSE) para los términos completos.
 
-Para conocer todos los términos legales detallados, consulta el archivo de [LICENCIA](file:///c:/Users/alors/Downloads/WinClean-Analyzer/LICENSE).
 
 Desarrollado con 💻 y 🧹 por **Alberto Ortiz**.
 
