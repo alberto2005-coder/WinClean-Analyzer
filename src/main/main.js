@@ -65,6 +65,7 @@ function createWindow() {
     minHeight: 650,
     frame: false, // Borderless, ultra-premium visual design
     backgroundColor: '#0d0d12',
+    icon: path.join(__dirname, '../renderer/assets/icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -72,7 +73,7 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadFile('index.html');
+  mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
 
   // Open the DevTools during development if needed
   // mainWindow.webContents.openDevTools();

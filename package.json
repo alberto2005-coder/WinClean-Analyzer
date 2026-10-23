@@ -2,10 +2,15 @@
   "name": "winclean-analyzer",
   "version": "1.0.0",
   "description": "A premium, modern desktop storage cleaner and task manager for Windows built with Web Technologies (HTML, CSS, Node.js, and Electron).",
-  "main": "main.js",
+  "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder"
+    "pack": "electron-builder --dir",
+    "build:icon": "python scripts/generate-icon.py",
+    "build:installer": "node scripts/build-installer.js",
+    "dist": "electron-builder --dir && node scripts/build-installer.js",
+    "dist:portable": "electron-builder --win portable",
+    "dist:all": "electron-builder --win dir portable && node scripts/build-installer.js"
   },
   "keywords": [
     "winclean",
@@ -17,7 +22,8 @@
   "author": "Alberto Ortiz",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^30.0.0"
+    "electron": "^45.0.0",
+    "electron-builder": "^26.15.3"
   },
   "build": {
     "appId": "com.albertoortiz.winclean-analyzer",
@@ -27,15 +33,12 @@
     },
     "win": {
       "target": [
-        "portable"
-      ]
+        "dir"
+      ],
+      "icon": "build/icon.ico"
     },
     "files": [
-      "main.js",
-      "preload.js",
-      "renderer.js",
-      "index.html",
-      "styles.css",
+      "src/**/*",
       "LICENSE",
       "package.json"
     ]
