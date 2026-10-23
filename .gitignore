@@ -51,7 +51,6 @@ $RECYCLE.BIN/
 # Packaging and Build Outputs
 dist/
 out/
-build/
 release/
 *.exe
 *.dmg

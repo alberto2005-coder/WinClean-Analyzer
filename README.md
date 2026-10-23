@@ -68,31 +68,34 @@ Para ejecutar este proyecto en tu computadora necesitas tener instalado [Node.js
 
 ---
 
-### 📦 Compilación y Generación del Ejecutable (.EXE):
+### 📦 Compilación y Generación del Release con Inno Setup 7:
 
-Al estar desarrollado con Electron, puedes empaquetar toda la aplicación en un **único archivo ejecutable (.exe) portátil** (sin necesidad de instalador) para llevar en un USB y usar en cualquier equipo.
+WinClean Analyzer cuenta con empaquetado nativo y generación de instalador profesional de Windows (.exe) utilizando **Inno Setup 7**:
 
-1. **Instala el empaquetador** `electron-builder` en tu entorno (una sola vez):
+1. **Instala las dependencias**:
    ```bash
-   npm install --save-dev electron-builder
+   npm install
    ```
 
-2. **Compila la aplicación**:
+2. **Compila la aplicación y genera el instalador**:
    ```bash
    npm run dist
    ```
 
-3. **¡Listo!** En la raíz de tu proyecto se creará una carpeta llamada `dist/` y dentro de ella tendrás el ejecutable **`WinClean Analyzer.exe`** compilado y listo para abrir en cualquier equipo.
+3. **¡Listo!** En la carpeta `dist/` se creará:
+   - `dist/WinClean-Analyzer-Setup-v1.0.0.exe`: Instalador ejecutable oficial compilado con Inno Setup 7 (compresión LZMA2, selección de idioma español/inglés, accesos directos y desinstalador limpio).
+   - `dist/win-unpacked/`: Binarios portables descomprimidos listos para ejecución directa.
 
 > [!TIP]
-> **Privilegios de Administrador**: Para realizar limpiezas exhaustivas en directorios protegidos del sistema como `Windows\Prefetch`, te recomendamos ejecutar la consola (o el archivo `.exe` generado) con permisos de administrador.
+> **Icono Personalizado**: Para regenerar el icono `.ico` multi-resolución a partir de `build/icon.png`, ejecuta `npm run build:icon`.
 
 ---
 
 ## 🛠️ Stack Tecnológico
 
 * **Frontend**: HTML5 Semántico, CSS3 Vanilla (Custom Properties, Flexbox, CSS Grid, Glassmorphism, Keyframe Animations), ES6+ JavaScript.
-* **Core Desktop Engine**: [Electron.js](https://www.electronjs.org/) (v30+) para el empaquetado nativo de escritorio.
+* **Core Desktop Engine**: [Electron.js](https://www.electronjs.org/) (v45.0.0 actualizado con Node.js v24.22.0 runtime) para empaquetado seguro y de máximo rendimiento.
+* **Release & Installer**: [Inno Setup 7](https://jrsoftware.org/isinfo.php) para la creación de instaladores nativos de Windows de 64 bits.
 * **Backend**: Node.js (File System APIs, Native OS Stats, `child_process` para intercomunicación).
 * **Integración del OS**: Scripts optimizados en Windows **PowerShell** para telemetría exacta y administración de tareas.
 * **Seguridad**: Arquitectura robusta basada en un archivo `preload.js` con aislamiento de contexto (`contextBridge`) para evitar inyecciones de código.
