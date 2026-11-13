@@ -1,137 +1,98 @@
-# 🧹 WinClean Analyzer
+# WinClean Analyzer
 
-> **A premium, modern desktop storage cleaner and task manager for Windows built with Web Technologies (HTML, CSS, Node.js, and Electron).**
+[![Electron](https://img.shields.io/badge/Electron-45-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-24-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-0078D6?logo=windows&logoColor=white)](https://www.microsoft.com/windows)
+[![GPL-3.0](https://img.shields.io/badge/Licencia-GPL--3.0-blue)](LICENSE)
 
-Desarrollado con pasión por **[Alberto Ortiz](https://github.com/alberto2005-coder)**.
-
----
-
-## 🎨 Vista General y Filosofía de Diseño
-
-**WinClean Analyzer** es una herramienta de optimización de sistema que rompe con la estética aburrida y tradicional de las herramientas del sistema. Combina un rendimiento de nivel nativo media[...]
-
-* **Glassmorphism UI**: Paneles de control translúcidos con efectos de desenfoque de cristal (`backdrop-filter`).
-* **OLED Cyberpunk Theme**: Paleta oscura profunda enriquecida con gradientes vibrantes y luces de neón en cyan, rosa y naranja.
-* **Telemetría Nivel OS 60fps**: Medidores de rendimiento animados de CPU, RAM y almacenamiento en tiempo real a través de gráficos dinámicos SVG nativos.
-* **Consola de Proceso Virtual**: Una terminal interactiva integrada estilo hacker que reporta el progreso preciso y detalla la liberación de megabytes.
+[Español](#español) · [English](#english)
 
 ---
 
-## 🚀 Características Principales
+## Español
 
-### 1. Limpiador Avanzado de Disco (Purge System)
-Analiza y purga de forma segura múltiples categorías de archivos temporales que ralentizan tu equipo:
-* **Temporales de Usuario** (`%TEMP%`): Caché residual de aplicaciones instaladas.
-* **Temporales de Windows** (`C:\Windows\Temp`): Archivos creados por procesos del sistema operativo.
-* **Papelera de Reciclaje**: Vacía de forma completa los elementos en cola de eliminación.
-* **Carpeta de Descargas** (`C:\Users\Usuario\Downloads`): Analiza y borra los archivos acumulados de descargas viejas.
-* **Archivos Prefetch** (`C:\Windows\Prefetch`): Datos de precarga acumulados obsoletos.
-* **Archivos de Registro (Logs)** (`C:\Windows\Logs`): Informes de eventos y volcados históricos del sistema.
-* **Caché de Navegadores**: Descarga la caché web acumulada de **Google Chrome** y **Microsoft Edge**.
-* **Limpieza de DNS**: Flush de la caché DNS para optimizar la resolución de red local.
+### Índice
 
-### 2. Administrador de Tareas Inteligente
-* Muestra en tiempo real los 30 procesos de Windows con mayor consumo de memoria RAM (>10MB).
-* Barra de búsqueda reactiva para filtrar procesos en milisegundos.
-* Terminación forzada a nivel de sistema (`taskkill`) para desbloquear programas colgados.
+- [Descripción](#descripción)
+- [Características](#características)
+- [Stack tecnológico](#stack-tecnológico)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Requisitos](#requisitos)
+- [Ejecución](#ejecución)
+- [Compilación e instalador](#compilación-e-instalador)
+- [Aviso importante](#aviso-importante)
+- [Licencia](#licencia)
 
-### 3. Gestor de Programas de Inicio
-* Lista detallada de las aplicaciones configuradas en el registro para arrancar junto con Windows.
-* Te ayuda a identificar programas innecesarios que ralentizan el encendido de la computadora.
+### Descripción
 
-### 4. Asistente de Recomendaciones
-* Un panel interactivo que te saluda personalmente y te proporciona sugerencias personalizadas y alertas preventivas basadas en el volumen de basura que tienes acumulada en el disco.
+**WinClean Analyzer** es una utilidad de escritorio para **Windows 10/11** que reúne limpieza de disco, monitor de procesos y gestión de programas de inicio en una interfaz oscura tipo *glassmorphism*. Está construida con **Electron**, HTML, CSS y JavaScript, y usa **PowerShell** para consultar el sistema.
 
----
+### Características
 
-## 🏗️ Requisitos e Instalación
+**Limpiador de disco**
 
-Para ejecutar este proyecto en tu computadora necesitas tener instalado [Node.js](https://nodejs.org/).
+- **Temporales de usuario** (`%TEMP%`) y **de Windows** (`C:\Windows\Temp`).
+- **Papelera de reciclaje**.
+- **Carpeta de descargas**: analiza y elimina archivos acumulados.
+- **Prefetch** (`C:\Windows\Prefetch`) y **logs del sistema** (`C:\Windows\Logs`).
+- **Caché de Chrome y Edge**.
+- **Flush de DNS**.
 
-### Pasos para iniciar en local:
+**Administrador de tareas**
 
-1. **Clona el repositorio** en tu máquina:
-   ```bash
-   git clone https://github.com/tu-usuario/WinClean-Analyzer.git
-   cd WinClean-Analyzer
-   ```
+- Lista en tiempo real de los procesos que más RAM consumen (por encima de 10 MB).
+- Búsqueda instantánea para filtrar procesos.
+- Terminación forzada con `taskkill`.
 
-2. **Instala las dependencias** de desarrollo (Electron):
-   ```bash
-   npm install
-   ```
+**Gestor de inicio**
 
-3. **Lanza la aplicación en modo desarrollo**:
-   ```bash
-   npm start
-   ```
+- Lista las aplicaciones registradas para arrancar con Windows y ayuda a detectar las innecesarias.
 
----
+**Panel de recomendaciones**
 
-### 📦 Compilación y Generación del Release con Inno Setup 7:
+- Resume el espacio recuperable y sugiere qué limpiar según el volumen de basura detectado.
 
-WinClean Analyzer cuenta con empaquetado nativo y generación de instalador profesional de Windows (.exe) utilizando **Inno Setup 7**:
+### Stack tecnológico
 
-1. **Instala las dependencias**:
-   ```bash
-   npm install
-   ```
+| Capa | Tecnología |
+|---|---|
+| Shell de escritorio | Electron 45 (runtime Node.js 24) |
+| Interfaz | HTML5, CSS3 (Grid, Flexbox, *backdrop-filter*, animaciones) y JavaScript ES6+ |
+| Sistema | APIs de Node (`fs`, `child_process`, estadísticas del SO) y scripts de PowerShell |
+| Seguridad | `preload.js` con `contextBridge` y aislamiento de contexto |
+| Instalador | electron-builder e Inno Setup 7 |
 
-2. **Compila la aplicación y genera el instalador**:
-   ```bash
-   npm run dist
-   ```
+### Estructura del proyecto
 
-3. **¡Listo!** En la carpeta `dist/` se creará:
-   - `dist/WinClean-Analyzer-Setup-v1.0.0.exe`: Instalador ejecutable oficial compilado con Inno Setup 7 (compresión LZMA2, selección de idioma español/inglés, accesos directos y desinstalador limpio).
-   - `dist/win-unpacked/`: Binarios portables descomprimidos listos para ejecución directa.
+```text
+WinClean-Analyzer/
+├── src/
+│   ├── main/
+│   │   ├── main.js          # Proceso principal de Electron e IPC
+│   │   └── preload.js       # Puente seguro con contextBridge
+│   └── renderer/
+│       ├── index.html       # Interfaz
+│       ├── renderer.js      # Lógica de la UI
+│       ├── styles.css       # Tema OLED y glassmorphism
+│       └── assets/icon.png
+├── scripts/
+│   ├── build-installer.js   # Empaquetado con Inno Setup
+│   └── generate-icon.py     # Icono .ico multi-resolución
+├── installer/winclean-analyzer.iss
+├── build/                    # Iconos generados
+├── package.json
+├── LICENSE
+└── README.md
+```
 
-> [!TIP]
-> **Icono Personalizado**: Para regenerar el icono `.ico` multi-resolución a partir de `build/icon.png`, ejecuta `npm run build:icon`.
+### Requisitos
 
----
+- **Windows 10/11 x64** (el análisis de sistema usa rutas y comandos de Windows).
+- **Node.js 20 o superior** para desarrollo; el ejecutable final lleva su propio runtime.
+- **Inno Setup 7** solo si vas a generar el instalador.
+- Permisos de administrador para limpiar carpetas del sistema y terminar ciertos procesos.
 
-## 🛠️ Stack Tecnológico
-
-* **Frontend**: HTML5 Semántico, CSS3 Vanilla (Custom Properties, Flexbox, CSS Grid, Glassmorphism, Keyframe Animations), ES6+ JavaScript.
-* **Core Desktop Engine**: [Electron.js](https://www.electronjs.org/) (v45.0.0 actualizado con Node.js v24.22.0 runtime) para empaquetado seguro y de máximo rendimiento.
-* **Release & Installer**: [Inno Setup 7](https://jrsoftware.org/isinfo.php) para la creación de instaladores nativos de Windows de 64 bits.
-* **Backend**: Node.js (File System APIs, Native OS Stats, `child_process` para intercomunicación).
-* **Integración del OS**: Scripts optimizados en Windows **PowerShell** para telemetría exacta y administración de tareas.
-* **Seguridad**: Arquitectura robusta basada en un archivo `preload.js` con aislamiento de contexto (`contextBridge`) para evitar inyecciones de código.
-
----
-
-## 📝 Licencia
-
-Este proyecto está bajo la **Licencia GPL-3.0**. Puedes usarlo, modificarlo y redistribuirlo libremente, incluso con fines comerciales, siempre que publicues el código fuente de tus versiones modificadas bajo la misma licencia (copyleft) y conserves el crédito a **[Alberto Ortiz](https://github.com/alberto2005-coder)**.
-
-Consulta el archivo de [LICENSE](LICENSE) para los términos completos.
-
-
-Desarrollado con 💻 y 🧹 por **Alberto Ortiz**.
-
----
-
-# English Version
-
-## Overview
-
-**WinClean Analyzer** is a system optimization tool designed to break the visual boredom of traditional system utilities. It combines native-level performance with a premium interface and advanced cleaning features.
-
-## Main Features
-
-- Advanced disk cleaner for temporary files, browser cache, downloads, and logs
-- Smart task manager with real-time process monitoring and forced termination
-- Startup apps manager for Windows boot optimization
-- Recommendations panel to guide cleanup actions
-
-## Requirements
-
-- [Node.js](https://nodejs.org/)
-- Windows 10/11
-
-## Run locally
+### Ejecución
 
 ```bash
 git clone https://github.com/alberto2005-coder/WinClean-Analyzer.git
@@ -140,11 +101,148 @@ npm install
 npm start
 ```
 
-## Build
+### Compilación e instalador
 
 ```bash
-npm install --save-dev electron-builder
-npm run dist
+npm run dist           # binarios + instalador en dist/
+npm run dist:portable  # versión portable
+npm run build:icon     # regenerar build/icon.ico desde build/icon.png
 ```
 
-This bilingual README keeps the original Spanish content first and adds the English overview below for broader accessibility.
+Resultados en `dist/`:
+
+- `dist/WinClean-Analyzer-Setup-v1.0.0.exe` — instalador con compresión LZMA2, selección de idioma español/inglés, accesos directos y desinstalador.
+- `dist/win-unpacked/` — binarios portables listos para ejecutar.
+
+### Aviso importante
+
+Esta herramienta **borra archivos de forma permanente**:
+
+- La limpieza de **Descargas** elimina archivos personales, no solo basura. Revísala antes de ejecutarla o desactívala.
+- Vaciar la **Papelera** y borrar **Prefetch** o **Logs** no se puede deshacer.
+- Algunas operaciones requieren **permisos de administrador**; ejecuta la app solo desde una cuenta de confianza.
+- Prueba primero en una máquina virtual o con una copia de seguridad si no estás seguro.
+
+### Licencia
+
+**GNU General Public License v3.0 (GPL-3.0)** — consulta [LICENSE](LICENSE). Puedes usarlo, modificarlo y redistribuirlo, incluso comercialmente, siempre que publiques las versiones modificadas bajo la misma licencia y conserves el crédito a **Alberto Ortiz**.
+
+---
+
+## English
+
+### Table of contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech stack](#tech-stack)
+- [Project structure](#project-structure)
+- [Requirements](#requirements)
+- [Running](#running)
+- [Build and installer](#build-and-installer)
+- [Important notice](#important-notice)
+- [License](#license)
+
+### Overview
+
+**WinClean Analyzer** is a **Windows 10/11** desktop utility that combines disk cleaning, process monitoring and startup management in a dark glassmorphism interface. It is built with **Electron**, HTML, CSS and JavaScript, and uses **PowerShell** to query the system.
+
+### Features
+
+**Disk cleaner**
+
+- **User temp** (`%TEMP%`) and **Windows temp** (`C:\Windows\Temp`).
+- **Recycle Bin**.
+- **Downloads folder**: analyses and removes accumulated files.
+- **Prefetch** (`C:\Windows\Prefetch`) and **system logs** (`C:\Windows\Logs`).
+- **Chrome and Edge cache**.
+- **DNS flush**.
+
+**Task manager**
+
+- Real-time list of the processes consuming the most RAM (above 10 MB).
+- Instant search to filter processes.
+- Forced termination through `taskkill`.
+
+**Startup manager**
+
+- Lists apps registered to start with Windows and helps spot unnecessary ones.
+
+**Recommendations panel**
+
+- Summarises reclaimable space and suggests what to clean based on the detected junk volume.
+
+### Tech stack
+
+| Layer | Technology |
+|---|---|
+| Desktop shell | Electron 45 (Node.js 24 runtime) |
+| Interface | HTML5, CSS3 (Grid, Flexbox, `backdrop-filter`, animations) and ES6+ JavaScript |
+| System | Node APIs (`fs`, `child_process`, OS stats) and PowerShell scripts |
+| Security | `preload.js` with `contextBridge` and context isolation |
+| Installer | electron-builder and Inno Setup 7 |
+
+### Project structure
+
+```text
+WinClean-Analyzer/
+├── src/
+│   ├── main/
+│   │   ├── main.js          # Electron main process and IPC
+│   │   └── preload.js       # Secure contextBridge
+│   └── renderer/
+│       ├── index.html       # Interface
+│       ├── renderer.js      # UI logic
+│       ├── styles.css       # OLED theme and glassmorphism
+│       └── assets/icon.png
+├── scripts/
+│   ├── build-installer.js   # Inno Setup packaging
+│   └── generate-icon.py     # Multi-resolution .ico icon
+├── installer/winclean-analyzer.iss
+├── build/                    # Generated icons
+├── package.json
+├── LICENSE
+└── README.md
+```
+
+### Requirements
+
+- **Windows 10/11 x64** (system analysis relies on Windows paths and commands).
+- **Node.js 20 or later** for development; the final executable bundles its own runtime.
+- **Inno Setup 7** only if you build the installer.
+- Administrator rights to clean system folders and terminate some processes.
+
+### Running
+
+```bash
+git clone https://github.com/alberto2005-coder/WinClean-Analyzer.git
+cd WinClean-Analyzer
+npm install
+npm start
+```
+
+### Build and installer
+
+```bash
+npm run dist           # binaries + installer in dist/
+npm run dist:portable  # portable build
+npm run build:icon     # regenerate build/icon.ico from build/icon.png
+```
+
+Output in `dist/`:
+
+- `dist/WinClean-Analyzer-Setup-v1.0.0.exe` — installer with LZMA2 compression, Spanish/English language selection, shortcuts and a clean uninstaller.
+- `dist/win-unpacked/` — portable binaries ready to run.
+
+### Important notice
+
+This tool **deletes files permanently**:
+
+- Cleaning **Downloads** removes personal files, not just junk. Review it before running or leave it disabled.
+- Emptying the **Recycle Bin** and clearing **Prefetch** or **Logs** cannot be undone.
+- Some operations require **administrator rights**; only run the app from a trusted account.
+- Try it in a virtual machine or with a backup first if you are unsure.
+
+### License
+
+**GNU General Public License v3.0 (GPL-3.0)** — see [LICENSE](LICENSE). You may use, modify and redistribute it, including commercially, as long as modified versions are published under the same license and credit to **Alberto Ortiz** is preserved.
