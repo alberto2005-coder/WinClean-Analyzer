@@ -20,7 +20,7 @@
     "electron"
   ],
   "author": "Alberto Ortiz",
-  "license": "ISC",
+  "license": "GPL-3.0-only",
   "devDependencies": {
     "electron": "^45.0.0",
     "electron-builder": "^26.15.3"
